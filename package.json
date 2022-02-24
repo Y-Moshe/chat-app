@@ -1,0 +1,10 @@
+{
+  "name": "chat-app",
+  "version": "0.1.0",
+  "description": "Real-Time Chat application with server-side and client-side integration.",
+  "main": "index.js",
+  "repository": "git@github.com:Y-Moshe/chat-app.git",
+  "author": "Y-Moshe <moshe.nehemiah@gmail.com>",
+  "license": "MIT",
+  "private": true
+}

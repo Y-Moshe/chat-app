@@ -1,0 +1,9 @@
+{
+  "name": "server",
+  "version": "0.1.0",
+  "description": "Real-Time Server application with basic user authentication.",
+  "main": "index.js",
+  "author": "Y-Moshe",
+  "license": "MIT",
+  "private": true
+}
