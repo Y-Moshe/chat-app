@@ -20,7 +20,8 @@ const createUser = async ( req, res, next ) => {
 
     const user = new User({
       username,
-      password: hashedPassword
+      password: hashedPassword,
+      creationDate: new Date()
     });
 
     if ( req.file ) {
