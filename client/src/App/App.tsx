@@ -1,5 +1,5 @@
-import { Suspense, useState, createContext } from 'react';
-import { Grid } from '@mui/material';
+import { useState, useMemo, createContext, Suspense } from 'react';
+import { Grid, createTheme, ThemeProvider, PaletteMode } from '@mui/material';
 
 import { ErrorBoundary, SuspenseFallBack, Header, Footer } from './Components';
 import { AuthData, AuthContextType } from './Types';
@@ -12,22 +12,32 @@ export const AuthContext = createContext<AuthContextType>({
 
 export default function App() {
   const [ authData, setAuthData ] = useState<AuthData>();
+  const [ themeMode, setThemeMode ] = useState<PaletteMode>( 'light' );
+
+  const theme = useMemo(() => createTheme({
+    palette: { mode: themeMode }
+  }), [ themeMode ]);
 
   return (
-    <Grid
-      container
-      direction = "column"
-      minHeight = "100vh">
-      <AuthContext.Provider value = {{ authData, setAuthData }}>
-        <Header />
+    <ThemeProvider theme = { theme }>
+      <Grid
+        container
+        direction = "column"
+        minHeight = "100vh">
+        <AuthContext.Provider value = {{ authData, setAuthData }}>
+          <Header
+            themeMode    = { themeMode }
+            setThemeMode = { setThemeMode }
+          />
 
-        <ErrorBoundary>
-          <Suspense fallback = { <SuspenseFallBack /> }>
-            <AppRouting />
-          </Suspense>
-        </ErrorBoundary>
-      </AuthContext.Provider>
-      <Footer />
-    </Grid>
+          <ErrorBoundary>
+            <Suspense fallback = { <SuspenseFallBack /> }>
+              <AppRouting />
+            </Suspense>
+          </ErrorBoundary>
+        </AuthContext.Provider>
+        <Footer />
+      </Grid>
+    </ThemeProvider>
   );
 }
