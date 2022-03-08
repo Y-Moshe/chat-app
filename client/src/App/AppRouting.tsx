@@ -1,6 +1,6 @@
 import { Switch, Route, Redirect } from 'react-router-dom';
 
-import { LoginPage, SignupPage } from './Auth';
+import { AuthPage } from './Auth';
 import { useAuth } from './Hooks';
 import { GeneralChatPage, ProfilePage } from './Pages';
 import { unAuthorizedError, notFoundError } from './Utils';
@@ -10,8 +10,7 @@ export function AppRouting() {
 
   return (
     <Switch>
-      <Route path = "/auth/login"  render = { props => isAuth ? unAuthorizedError() : <LoginPage  { ...props } /> } />
-      <Route path = "/auth/signup" render = { props => isAuth ? unAuthorizedError() : <SignupPage { ...props } /> } />
+      <Route path = "/auth" render = { props => isAuth ? unAuthorizedError() : <AuthPage  { ...props } /> } />
       <Route path = "/general"           component = { GeneralChatPage } />
       <Route path = "/profile/:username" component = { ProfilePage } />
       {/* Redirects Cases */}
