@@ -10,16 +10,11 @@ import {
   Collapse,
   PaletteMode
 } from '@mui/material';
-import {
-  Lock,
-  AccountBox,
-  Menu as MenuIcon,
-  AccountCircle
-} from '@mui/icons-material';
+import * as Icons from '@mui/icons-material';
 
+import { useAuth } from '../../../Hooks';
 import DarkModeBtn from './DarkModeBtn';
 import Logo from './Logo';
-import { useAuth } from '../../../Hooks';
 
 interface HeaderProps {
   themeMode: PaletteMode;
@@ -29,34 +24,29 @@ interface HeaderProps {
 export function Header( props: HeaderProps ) {
   const [ isMenuOpen, setIsMenuOpen ] = useState( false );
   const { pathname } = useLocation();
-  const { isAuth } = useAuth();
+  const { isAuth, username } = useAuth();
 
   const authLinks = useMemo(() => {
     let authLinks = [
       {
-        label: 'Log-In',
-        href: '/auth/login',
-        icon: <Lock />
-      },
-      {
-        label: 'Sign-Up',
-        href: '/auth/signup',
-        icon: <AccountBox />
+        label: 'Log-In / Sign-Up',
+        href: '/auth',
+        icon: <Icons.AccountBox />
       }
     ];
   
-    if ( isAuth ) {
+    if ( isAuth && username ) {
       authLinks = [
         {
-          label: 'UserName',
-          href: '/profile/userName',
-          icon: <AccountCircle />
+          label: username,
+          href: `/profile/${ username }`,
+          icon: <Icons.AccountCircle />
         }
       ];
     }
 
     return authLinks;
-  }, [ isAuth ]);
+  }, [ isAuth, username ]);
 
   return (
     <AppBar position = "static">
@@ -93,7 +83,7 @@ export function Header( props: HeaderProps ) {
           size    = "large"
           edge    = "start"
           onClick = { () => setIsMenuOpen( prev => !prev ) }>
-          <MenuIcon htmlColor = "white" />
+          <Icons.Menu htmlColor = "white" />
         </IconButton>
 
         {/* Push Desktop Auth links to right */}
