@@ -1,8 +1,9 @@
 import React from 'react';
-import { Grow, IconButton, PaletteMode } from '@mui/material';
+import { Grow, IconButton, PaletteMode, SxProps, Theme } from '@mui/material';
 import { Brightness4, Brightness7 } from '@mui/icons-material';
 
 interface DarkModeBtnProps {
+  sx?: SxProps<Theme>;
   themeMode: PaletteMode;
   setThemeMode: React.Dispatch<React.SetStateAction<PaletteMode>>;
 }
@@ -14,7 +15,7 @@ export default function DarkModeBtn( props: DarkModeBtnProps ) {
   };
 
   return (
-    <IconButton onClick = { handleThemeModeChange }>
+    <IconButton onClick = { handleThemeModeChange } sx = { props.sx }>
       {/* Dark mode switch */}
       {
         props.themeMode === 'light' &&
