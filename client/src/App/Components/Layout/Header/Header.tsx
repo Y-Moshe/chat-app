@@ -77,7 +77,13 @@ export function Header( props: HeaderProps ) {
             }
           </Box>
         </Collapse>
-        {/* Responsive IconButton Menu */}
+        {/* Dark Mode Switch */}
+        <DarkModeBtn
+          sx           = {{ display: { sm: 'none' }}}
+          themeMode    = { props.themeMode }
+          setThemeMode = { props.setThemeMode }
+        />
+        {/* Responsive Menu IconButton */}
         <IconButton
           sx      = {{ display: { sm: 'none' }}}
           size    = "large"
@@ -89,7 +95,7 @@ export function Header( props: HeaderProps ) {
         {/* Push Desktop Auth links to right */}
         <Box sx = {{ flexGrow: 1, display: { xs: 'none', sm: 'block' }}} />
         <Box sx = {{ display: { xs: 'none', sm: 'block' }}}>
-          {/* Dark mode switch */}
+          {/* Dark Mode Switch */}
           <DarkModeBtn
             themeMode    = { props.themeMode }
             setThemeMode = { props.setThemeMode }
