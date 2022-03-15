@@ -8,14 +8,13 @@ const {
   MONGO_CONNECTION_STRING,
   PORT
 } = require('./config');
-const { appVersion } = require('./utils');
+const { BASE_URI, appVersion } = require('./utils');
 const {
   AuthRoutes,
   UsersRoutes,
 } = require('./routes');
 const { errorHandler } = require('./middlewares');
 
-const BASE_URI = `/api/v${ appVersion }`;
 const app = express();
 
 mongoose.connect( MONGO_CONNECTION_STRING, {
@@ -27,6 +26,8 @@ mongoose.connect( MONGO_CONNECTION_STRING, {
   console.error( 'Could not connect to Database' );
   console.error( 'Error: ', error );
 });
+
+app.use( BASE_URI.concat( '/uploads' ), express.static( __dirname.concat( '/uploads' )));
 
 app.use( express.json() );
 app.use( express.urlencoded({ extended: true }) );
