@@ -1,22 +1,19 @@
 const mongoose = require('mongoose');
 const mongooseUniqueValidator = require('mongoose-unique-validator');
 
-const { UPLOADS_FOLDER } = require('../middlewares');
-const defaultProfileImage = UPLOADS_FOLDER.concat( '/default.png' );
-
 const userSchema = new mongoose.Schema({
   username: {
     type: String,
-    required: 'user name is required!',
-    unique: 'user name must be unique!'
+    required: 'Username is required!',
+    unique: 'This Username already exists!'
   },
   password: {
     type: String,
-    required: 'password is required!'
+    required: 'Password is required!'
   },
   profileImage: {
     type: String,
-    default: defaultProfileImage
+    required: 'ProfileImage is required!'
   },
   creationDate: {
     type: Date,
@@ -25,4 +22,5 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.plugin( mongooseUniqueValidator );
-module.exports = mongoose.model( 'User' , userSchema );
+const User = mongoose.model( 'User' , userSchema );
+module.exports = { User };
