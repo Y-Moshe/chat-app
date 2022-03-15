@@ -3,11 +3,13 @@ const bcrypt   = require('bcryptjs'),
       passport = require('passport'),
       ms       = require('ms');
 
-const { User } = require('../models');
-const { JWT_SECRET } = require('../config');
+const { User }        = require('../models');
+const { BASE_URI }    = require('../utils');
+const { JWT_SECRET }  = require('../config');
 
 const HASH_PASSWORD_SALT = 10;
 const LOGIN_TOKEN_EXPIRES_IN = ms( '3h' );
+const DEFAULT_PROFILE_IMAGE_NAME = 'default.png';
 
 const signToken = ( data, expiresIn = LOGIN_TOKEN_EXPIRES_IN ) =>
   jwt.sign({ data }, JWT_SECRET, { expiresIn });
@@ -24,19 +26,20 @@ const createUser = async ( req, res, next ) => {
       creationDate: new Date()
     });
 
+    let uploadsUrl = req.protocol.concat( '://', req.get( 'host' ), BASE_URI, '/uploads/' );
+
     if ( req.file ) {
-      user.profileImage = req.uploadedPath;
+      user.profileImage = uploadsUrl.concat( req.file.filename );
+    } else {
+      user.profileImage = uploadsUrl.concat( DEFAULT_PROFILE_IMAGE_NAME );
     }
 
     await user.save();
-    delete user.password;
+    const user2Return = user.toObject();
+    delete user2Return.password;
 
-    const token = signToken( user );
-    res.status( 201 ).json({
-      message: `Your account (${ username }) has been created!`,
-      user,
-      token
-    });
+    const token = signToken( user2Return );
+    res.status( 201 ).json({ user: user2Return, token });
   } catch( error ) {
     next( error );
   }
@@ -56,15 +59,14 @@ const loginUser = ( req, res ) => {
     }
 
     const token = signToken( user );
-    return res.json({
-      message: 'You are successfully connected!',
-      user,
-      token
-    });
+    return res.status( 200 ).json({ user, token });
   })( req, res );
 };
 
+const verifyToken = ( req, res ) => res.status( 200 ).json( req.user );
+
 module.exports = {
   createUser,
-  loginUser
+  loginUser,
+  verifyToken
 };
