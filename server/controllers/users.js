@@ -1,4 +1,5 @@
 const { User } = require('../models');
+const { isValidId } = require('../utils');
 
 const getUsers = async ( req, res, next ) => {
   try {
@@ -14,7 +15,12 @@ const getUsers = async ( req, res, next ) => {
 const getUser = async ( req, res, next ) => {
   try {
     const { id: _id } = req.params;
-    const user = await User.findById( _id ).select( '-password' ).lean();
+    let user;
+    if (isValidId( _id )) {
+      user = await User.findById( _id ).select( '-password' ).lean();
+    } else {
+      user = await User.findOne({ username: _id }).select( '-password' ).lean();
+    }
 
     if ( !user ) {
       throw new Error( 'Could not found the user' );
