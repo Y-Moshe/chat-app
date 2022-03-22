@@ -8,22 +8,25 @@ const { User } = require('./models');
 const { JWT_SECRET } = require('./config');
 
 passport.use( new LocalStrategy({ session: false }, async ( username, password, done ) => {
-  const user = await User.findOne({ username }).lean();
-
-  // username was not found
-  if ( !username ) {
-    return done( null, false, { message: `username ${ username } does not exists!` });
+  try {
+    const user = await User.findOne({ username }).lean();
+    // user account was not found
+    if ( !user ) {
+      return done( null, false, { message: `The Username ${ username } does not exists!` });
+    }
+  
+    // incorrect password
+    const isPasswordMatch = await bcrypt.compare( password, user.password );
+    if ( !isPasswordMatch ) {
+      return done( null, false, { message: 'Incorrect password!' });
+    }
+    delete user.password;
+  
+    // onSuccess login
+    done( null, user );
+  } catch ( e ) {
+    done( e );
   }
-
-  // incorrect password
-  const isPasswordMatch = await bcrypt.compare( password, user.password );
-  if ( !isPasswordMatch ) {
-    return done( null, false, { message: 'incorrect password!' });
-  }
-  delete user.password;
-
-  // onSuccess login
-  done( null, user );
 }));
 
 passport.use(new JwtStrategy({
