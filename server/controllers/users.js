@@ -1,5 +1,5 @@
 const { User } = require('../models');
-const { isValidId } = require('../utils');
+const { isValidId, CustomError } = require('../utils');
 
 const getUsers = async ( req, res, next ) => {
   try {
@@ -23,7 +23,7 @@ const getUser = async ( req, res, next ) => {
     }
 
     if ( !user ) {
-      throw new Error( 'Could not found the user' );
+      throw new CustomError( 'Could not found the user', 404 );
     }
 
     res.status( 200 ).json( user );
