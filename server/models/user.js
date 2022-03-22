@@ -5,11 +5,14 @@ const userSchema = new mongoose.Schema({
   username: {
     type: String,
     required: 'Username is required!',
-    unique: 'This Username already exists!'
+    unique: 'Username already exists!',
+    minlength: [ 3, 'Username is too short! At least 3 characters is required!' ],
+    maxlength: [ 23, 'Username is too long! Max characters: 23!' ]
   },
   password: {
     type: String,
-    required: 'Password is required!'
+    required: 'Password is required!',
+    minlength: [ 6, 'Password is too short! At least 6 characters is required!' ]
   },
   profileImage: {
     type: String,
