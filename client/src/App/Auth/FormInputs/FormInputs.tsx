@@ -14,6 +14,7 @@ import {
 import * as Icons from '@mui/icons-material';
 
 import ProfileImageInput from './ProfileImageInput';
+import { AuthFormSchema } from '../../Types';
 
 const ALLOWED_MIME_TYPE = ['image/png', 'image/jpeg', 'image/jpg'];
 
@@ -21,23 +22,17 @@ const validateImageType = ( file: File ) => !file || ( file && ALLOWED_MIME_TYPE
 const validateImageSize = ( file: File ) => !file || ( file && file.size < 2097152 );
 
 const validationSchema = yup.object({
-  username:     yup.string().required().min(3).max(25),
+  username:     yup.string().required().min(3).max(23),
   password:     yup.string().required().min(6),
   profileImage: yup.mixed()
   .test( 'is-valid-type', 'Invalid file, please pick an image! jpg, jpeg or png!', validateImageType )
   .test( 'is-valid-size', 'The profile image is too big, Max 2MB!', validateImageSize )
 });
 
-interface ValidationSchema {
-  username: string;
-  password: string;
-  profileImage?: File;
-}
-
 interface FormInputsProps {
   isSignupForm?: boolean;
   setFocusOnUsername?: boolean;
-  onSubmit: ( data: ValidationSchema ) => void;
+  onSubmit: ( data: AuthFormSchema ) => void;
 }
 
 export default function FormInputs( props: FormInputsProps ) {
@@ -52,7 +47,7 @@ export default function FormInputs( props: FormInputsProps ) {
       isValid,
       touchedFields
     }
-  } = useForm<ValidationSchema>({
+  } = useForm<AuthFormSchema>({
     resolver: yupResolver( validationSchema ),
     mode: 'all'
   });
