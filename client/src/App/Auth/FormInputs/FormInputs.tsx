@@ -32,6 +32,7 @@ const validationSchema = yup.object({
 interface FormInputsProps {
   isSignupForm?: boolean;
   setFocusOnUsername?: boolean;
+  isSubmitting: boolean;
   onSubmit: ( data: AuthFormSchema ) => void;
 }
 
@@ -119,7 +120,7 @@ export default function FormInputs( props: FormInputsProps ) {
       <Box sx = {{ marginTop: 2 }}>
         <Button
           type     = "submit"
-          disabled = { !isValid }
+          disabled = { !isValid || props.isSubmitting }
           endIcon  = { props.isSignupForm ? <Icons.Verified /> : <Icons.LockOpen /> }
           variant  = "contained"
           color    = "primary"
