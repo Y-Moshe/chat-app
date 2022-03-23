@@ -1,8 +1,13 @@
-import { RouteComponentProps } from 'react-router-dom';
-import { Grid, Theme, Typography } from '@mui/material';
+import { useEffect, useState } from 'react';
+import { RouteComponentProps, useHistory } from 'react-router-dom';
+import { Alert, Grid, Grow, Theme, Typography, LinearProgress } from '@mui/material';
 
 import { ProgressImage } from '../Components';
 import FormInputs from './FormInputs/FormInputs';
+import { AuthFormSchema } from '../Types';
+import { AuthService } from '../Services';
+import { AxiosError } from 'axios';
+import { useAuth } from '../Hooks';
 
 const loginBoxStyle = ( theme: Theme ): any => ({
   margin: 'auto',
@@ -18,12 +23,42 @@ const loginBoxStyle = ( theme: Theme ): any => ({
 interface AuthPageProps extends RouteComponentProps {}
 
 export default function AuthPage( props: AuthPageProps ) {
-  const handleLoginRequest = ( data: any ) => {
-    console.log(data);
+  const [ isSubmitting, setIsSubmitting ] = useState( false );
+  const [ errorMessage, setErrorMessage ] = useState( '' );
+  const { isAuth, username, setAuthData } = useAuth();
+  const history = useHistory();
+
+  useEffect(() => {
+    if ( isAuth ) {
+      setTimeout(() => history.push( '/profile/' +  username ), 1000);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ isAuth ]);
+
+  const handleLoginRequest = ( data: AuthFormSchema ) => {
+    const { username, password } = data;
+
+    setIsSubmitting( true );
+    AuthService.login( username, password )
+      .then( res => {
+        setAuthData({
+          ...res.data.user,
+          token: res.data.token
+        });
+      }).catch(( e: AxiosError ) => setErrorMessage( e.message ));
   };
   
-  const handleSignupRequest = ( data: any ) => {
-    console.log(data);
+  const handleSignupRequest = ( data: AuthFormSchema ) => {
+    const { username, password, profileImage } = data;
+
+    setIsSubmitting( true );
+    AuthService.signup( username, password, profileImage )
+      .then( res => {
+        setAuthData({
+          ...res.data.user,
+          token: res.data.token
+        });
+      }).catch(( e: AxiosError ) => setErrorMessage( e.message ));
   };
 
   return (
@@ -41,10 +76,11 @@ export default function AuthPage( props: AuthPageProps ) {
         <Grid xs = { 12 } md = { 5.5 } item>
           <FormInputs
             setFocusOnUsername
+            isSubmitting = { isSubmitting }
             onSubmit = { handleLoginRequest }
           />
         </Grid>
-        <Grid md = { 1 } item width = { 1 }>
+        <Grid md = { 1 } width = { 1 } item>
           <Grid container item height = { 1 }>
             <Typography margin = "auto">-Or-</Typography>
           </Grid>
@@ -52,9 +88,20 @@ export default function AuthPage( props: AuthPageProps ) {
         <Grid xs = { 12 } md = { 5.5 } item>
           <FormInputs
             isSignupForm
+            isSubmitting = { isSubmitting }
             onSubmit = { handleSignupRequest }
           />
         </Grid>
+        <Grow in = { Boolean ( errorMessage ) }>
+          <Grid xs = { 12 } paddingTop = { 1 } container item>
+            <Alert severity = "warning" sx = {{ width: 0.5, m: 'auto' }}>{ errorMessage }</Alert>
+          </Grid>
+        </Grow>
+        <Grow in = { isSubmitting }>
+          <Grid xs = { 12 } margin = { 0.3 } item>
+            <LinearProgress />
+          </Grid>
+        </Grow>
       </Grid>
     </Grid>
   )
