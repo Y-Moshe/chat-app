@@ -10,7 +10,7 @@ export interface UserData {
   _id: string;
   username: string;
   profileImage: string;
-  creationDate: Date;
+  creationDate: string;
 }
 
 export interface AuthData extends UserData {
