@@ -1,18 +1,16 @@
 import { Switch, Route, Redirect } from 'react-router-dom';
 
 import { AuthPage } from './Auth';
-import { useAuth } from './Hooks';
 import { GeneralChatPage, ProfilePage } from './Pages';
-import { unAuthorizedError, notFoundError } from './Utils';
+import { notFoundError } from './Utils';
 
 export function AppRouting() {
-  const { isAuth } = useAuth();
 
   return (
     <Switch>
-      <Route path = "/auth" render = { props => isAuth ? unAuthorizedError() : <AuthPage  { ...props } /> } />
       <Route path = "/general"           component = { GeneralChatPage } />
       <Route path = "/profile/:username" component = { ProfilePage } />
+      <Route path = "/auth" component = { AuthPage } />
       {/* Redirects Cases */}
       <Redirect path = "/"     to = "/general" exact />
       <Redirect path = "/home" to = "/" />
