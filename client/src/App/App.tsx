@@ -1,9 +1,10 @@
-import { useState, useMemo, createContext, Suspense } from 'react';
+import { useEffect, useState, useMemo, createContext, Suspense } from 'react';
 import { Grid, createTheme, ThemeProvider, PaletteMode } from '@mui/material';
 
 import { ErrorBoundary, SuspenseFallBack, Header, Footer } from './Components';
 import { AuthData, AuthContextType } from './Types';
 import { AppRouting } from './AppRouting';
+import { AuthService } from './Services';
 
 export const AuthContext = createContext<AuthContextType>({
   authData: undefined,
@@ -17,6 +18,12 @@ export default function App() {
   const theme = useMemo(() => createTheme({
     palette: { mode: themeMode }
   }), [ themeMode ]);
+
+  useEffect(() => {
+    AuthService.loadUserData()
+      .then( userData => userData && setAuthData( userData ))
+      .catch( e => console.log( e ));
+  }, []);
 
   return (
     <ThemeProvider theme = { theme }>

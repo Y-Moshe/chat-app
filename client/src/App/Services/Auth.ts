@@ -1,5 +1,5 @@
 import axios from '../Axios';
-import { AuthResponse, VerifyTokenResponse } from '../Types';
+import { AuthData, AuthResponse, VerifyTokenResponse } from '../Types';
 
 const BASE_API = '/auth';
 
@@ -31,7 +31,8 @@ const loadUserData = async () => {
   if ( token ) {
     try {
       const user = await verifyToken( token );
-      return user.data.data;
+      const authData: AuthData = { ...user.data.data, token };
+      return authData;
     } catch ( e ) {
       // incase of invalid token or expired
       window.localStorage.removeItem( 'token' );
