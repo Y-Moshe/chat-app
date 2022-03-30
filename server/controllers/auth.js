@@ -1,18 +1,31 @@
 const bcrypt   = require('bcryptjs'),
       jwt      = require('jsonwebtoken'),
-      passport = require('passport'),
-      ms       = require('ms');
+      passport = require('passport');
 
 const { User }        = require('../models');
 const { BASE_URI }    = require('../utils');
 const { JWT_SECRET }  = require('../config');
 
 const HASH_PASSWORD_SALT = 10;
-const LOGIN_TOKEN_EXPIRES_IN = ms( '3h' );
+const LOGIN_TOKEN_EXPIRES_IN = '30s';
 const DEFAULT_PROFILE_IMAGE_NAME = 'default.png';
 
-const signToken = ( data, expiresIn = LOGIN_TOKEN_EXPIRES_IN ) =>
-  jwt.sign({ data }, JWT_SECRET, { expiresIn });
+/**
+ * Sign JWT Token based on user data.
+ * @param {*} data should be a user data!
+ * @param {*} expiresIn in ms as number (optional)
+ * @returns auth data object contains the token, iat and experation date.
+ */
+const signToken = ( data, expiresIn = LOGIN_TOKEN_EXPIRES_IN ) => {
+  const token = jwt.sign({ data }, JWT_SECRET, { expiresIn });
+  const { iat, exp }  = jwt.verify( token, JWT_SECRET );
+
+  return {
+    token,
+    iat,
+    exp
+  };
+};
 
 const createUser = async ( req, res, next ) => {
   try {
@@ -38,8 +51,8 @@ const createUser = async ( req, res, next ) => {
     const user2Return = user.toObject();
     delete user2Return.password;
 
-    const token = signToken( user2Return );
-    res.status( 201 ).json({ user: user2Return, token });
+    const auth = signToken( user2Return );
+    res.status( 201 ).json({ user: user2Return, auth });
   } catch( error ) {
     next( error );
   }
@@ -58,8 +71,8 @@ const loginUser = ( req, res ) => {
       return res.status( 401 ).json( info );
     }
 
-    const token = signToken( user );
-    return res.status( 200 ).json({ user, token });
+    const auth = signToken( user );
+    return res.status( 200 ).json({ user, auth });
   })( req, res );
 };
 
