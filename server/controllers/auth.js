@@ -14,14 +14,14 @@ const DEFAULT_PROFILE_IMAGE_NAME = 'default.png';
  * Sign JWT Token based on user data.
  * @param {*} data should be a user data!
  * @param {*} expiresIn in ms as number (optional)
- * @returns auth data object contains the token, iat and experation date.
+ * @returns token properties contains the token, iat and experation date.
  */
 const signToken = ( data, expiresIn = LOGIN_TOKEN_EXPIRES_IN ) => {
   const token = jwt.sign({ data }, JWT_SECRET, { expiresIn });
   const { iat, exp }  = jwt.verify( token, JWT_SECRET );
 
   return {
-    token,
+    string: token,
     iat,
     exp
   };
@@ -51,8 +51,8 @@ const createUser = async ( req, res, next ) => {
     const user2Return = user.toObject();
     delete user2Return.password;
 
-    const auth = signToken( user2Return );
-    res.status( 201 ).json({ user: user2Return, auth });
+    const token = signToken( user2Return );
+    res.status( 201 ).json({ user: user2Return, token });
   } catch( error ) {
     next( error );
   }
@@ -71,8 +71,8 @@ const loginUser = ( req, res ) => {
       return res.status( 401 ).json( info );
     }
 
-    const auth = signToken( user );
-    return res.status( 200 ).json({ user, auth });
+    const token = signToken( user );
+    return res.status( 200 ).json({ user, token });
   })( req, res );
 };
 
