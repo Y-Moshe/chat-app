@@ -2,12 +2,12 @@ import { useEffect, useState } from 'react';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
 import { Alert, Grid, Grow, Theme, Typography, LinearProgress } from '@mui/material';
 
-import { ProgressImage } from '../Components';
 import FormInputs from './FormInputs/FormInputs';
+import { ProgressImage } from '../Components';
 import { AuthFormSchema } from '../Types';
 import { AuthService } from '../Services';
-import { AxiosError } from 'axios';
 import { useAuth } from '../Hooks';
+import { getErrorMessage } from '../Utils';
 
 const loginBoxStyle = ( theme: Theme ): any => ({
   margin: 'auto',
@@ -19,6 +19,7 @@ const loginBoxStyle = ( theme: Theme ): any => ({
   minWidth: 300,
   maxWidth: 1000
 });
+
 
 interface AuthPageProps extends RouteComponentProps {}
 
@@ -35,30 +36,41 @@ export default function AuthPage( props: AuthPageProps ) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ isAuth ]);
 
+  const preRequest = () => {
+    setIsSubmitting( true );
+    setErrorMessage( '' );
+  };
+
+  const uponRequest = ( e: any ) => {
+    const msg = getErrorMessage( e );
+    setErrorMessage( msg )
+    setIsSubmitting( false );
+  }
+
   const handleLoginRequest = ( data: AuthFormSchema ) => {
     const { username, password } = data;
+    preRequest();
 
-    setIsSubmitting( true );
     AuthService.login( username, password )
       .then( res => {
         setAuthData({
           ...res.data.user,
           token: res.data.token.string
         });
-      }).catch(( e: AxiosError ) => setErrorMessage( e.message ));
+      }).catch( e => uponRequest( e ));
   };
   
   const handleSignupRequest = ( data: AuthFormSchema ) => {
     const { username, password, profileImage } = data;
+    preRequest();
 
-    setIsSubmitting( true );
     AuthService.signup( username, password, profileImage )
       .then( res => {
         setAuthData({
           ...res.data.user,
           token: res.data.token.string
         });
-      }).catch(( e: AxiosError ) => setErrorMessage( e.message ));
+      }).catch( e => uponRequest( e ));
   };
 
   return (
