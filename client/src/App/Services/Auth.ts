@@ -10,6 +10,8 @@ const login = ( username: string, password: string ) => {
   });
 };
 
+const logout = () => window.localStorage.removeItem( 'token' );
+
 const signup = (
   username: string,
   password: string,
@@ -46,5 +48,6 @@ const loadUserData = async () => {
 export {
   login,
   signup,
-  loadUserData
+  loadUserData,
+  logout
 };
