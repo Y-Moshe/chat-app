@@ -19,7 +19,11 @@ export interface AuthData extends UserData {
 
 export interface AuthResponse {
   user: UserData;
-  token: string;
+  token: {
+    string: string;
+    iat: number;
+    exp: number;
+  };
 }
 export interface VerifyTokenResponse {
   data: UserData;

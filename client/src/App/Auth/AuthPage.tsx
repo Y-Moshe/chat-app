@@ -43,7 +43,7 @@ export default function AuthPage( props: AuthPageProps ) {
       .then( res => {
         setAuthData({
           ...res.data.user,
-          token: res.data.token
+          token: res.data.token.string
         });
       }).catch(( e: AxiosError ) => setErrorMessage( e.message ));
   };
@@ -56,7 +56,7 @@ export default function AuthPage( props: AuthPageProps ) {
       .then( res => {
         setAuthData({
           ...res.data.user,
-          token: res.data.token
+          token: res.data.token.string
         });
       }).catch(( e: AxiosError ) => setErrorMessage( e.message ));
   };
