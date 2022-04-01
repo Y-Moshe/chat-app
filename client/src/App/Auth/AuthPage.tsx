@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { RouteComponentProps, useHistory } from 'react-router-dom';
-import { Alert, Grid, Grow, Theme, Typography, LinearProgress } from '@mui/material';
+import {
+  Alert, Grid, Grow,
+  Theme, Typography, LinearProgress
+} from '@mui/material';
 
 import FormInputs from './FormInputs/FormInputs';
 import { ProgressImage } from '../Components';
@@ -14,7 +17,7 @@ const loginBoxStyle = ( theme: Theme ): any => ({
   padding: 2,
   borderRadius: 3,
   width: 0.6,
-  background: `rgba(0, 0, 0, ${ theme.palette.mode === 'light' ? 0.1 : 0.35 })`,
+  background: theme.palette.mode === 'light' ? 'transparent' : 'rgba(33,37,41,0.7)',
   boxShadow: '0 0 10px black',
   minWidth: 300,
   maxWidth: 1000
@@ -77,7 +80,7 @@ export default function AuthPage( props: AuthPageProps ) {
     <Grid container
       flexGrow = { 1 }
       width    = { 1 }
-      sx       = {{ background: 'linear-gradient(to right,rgba(247,84,9,.788),rgba(204,82,241,.678))' }}>
+      sx       = {{ background: 'linear-gradient(to right,rgba(247,84,9,.788),rgba(25,118,210,.678))' }}>
       <Grid container sx = { loginBoxStyle }>
         <ProgressImage
           src = "https://angular-dummy-project.herokuapp.com/assets/images/login-logo.png"
