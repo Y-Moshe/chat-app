@@ -1,5 +1,9 @@
 import { useState, useRef } from 'react';
-import { Grid, Box, SxProps, Theme, Tooltip, Button, Grow, Alert } from '@mui/material';
+import {
+  Grid, Box, SxProps,
+  Theme, Tooltip, Button,
+  Grow, Alert
+} from '@mui/material';
 import * as Icons from '@mui/icons-material';
 
 const ALLOWED_MIME_TYPE = ['image/png', 'image/jpeg', 'image/jpg'];
@@ -57,7 +61,7 @@ export default function ProfileImageInput( props: ProfileImageInputProps ) {
         <Tooltip title = "Optional">
           <Button
             sx = {{ m: 1 }}
-            variant   = "outlined"
+            variant   = "contained"
             startIcon = { <Icons.Image /> }
             onClick   = { () => profileImageRef.current?.click() }>
             Pick a Profile Image
