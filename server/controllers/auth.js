@@ -6,8 +6,8 @@ const { User }        = require('../models');
 const { BASE_URI }    = require('../utils');
 const { JWT_SECRET }  = require('../config');
 
-const HASH_PASSWORD_SALT = 10;
-const LOGIN_TOKEN_EXPIRES_IN = '30s';
+const HASH_PASSWORD_SALT         = 10;
+const LOGIN_TOKEN_EXPIRES_IN     = '3h';
 const DEFAULT_PROFILE_IMAGE_NAME = 'default.png';
 
 /**
