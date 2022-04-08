@@ -13,17 +13,19 @@ export interface UserData {
   creationDate: string;
 }
 
+export interface TokenObject {
+  string: string;
+  iat: number;
+  exp: number;
+}
+
 export interface AuthData extends UserData {
-  token: string;
+  token: TokenObject;
 }
 
 export interface AuthResponse {
   user: UserData;
-  token: {
-    string: string;
-    iat: number;
-    exp: number;
-  };
+  token: TokenObject;
 }
 export interface VerifyTokenResponse {
   data: UserData;

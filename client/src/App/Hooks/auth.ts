@@ -7,7 +7,7 @@ export function useAuth() {
 
   useEffect(() => {
     if ( authData && authData.token ) {
-      window.localStorage.setItem( 'token', authData.token );
+      window.localStorage.setItem( 'token', authData.token.string );
     }
   }, [ authData ]);
 
