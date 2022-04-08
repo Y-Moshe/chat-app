@@ -21,7 +21,12 @@ export default function App() {
 
   useEffect(() => {
     AuthService.loadUserData()
-      .then( userData => userData && setAuthData( userData ))
+      .then( userData => {
+        if ( userData ) {
+          setAuthData( userData );
+          AuthService.setAutoLogoutTimer( userData.token.exp, () => setAuthData( undefined ));
+        }
+      })
       .catch( e => console.log( e ));
   }, []);
 

@@ -58,8 +58,10 @@ export default function AuthPage( props: AuthPageProps ) {
       .then( res => {
         setAuthData({
           ...res.data.user,
-          token: res.data.token.string
+          token: res.data.token
         });
+
+        AuthService.setAutoLogoutTimer( res.data.token.exp, () => setAuthData( undefined ));
       }).catch( e => uponRequest( e ));
   };
   
@@ -71,8 +73,10 @@ export default function AuthPage( props: AuthPageProps ) {
       .then( res => {
         setAuthData({
           ...res.data.user,
-          token: res.data.token.string
+          token: res.data.token
         });
+
+        AuthService.setAutoLogoutTimer( res.data.token.exp, () => setAuthData( undefined ));
       }).catch( e => uponRequest( e ));
   };
 
