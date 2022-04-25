@@ -37,3 +37,10 @@ export type AuthContextType = {
   authData: AuthData | undefined;
   setAuthData: Dispatch<SetStateAction<AuthData | undefined>>;
 }
+
+export type ChatMessageType = {
+  id: string;
+  type: 'system' | 'own' | 'chat';
+  message: string;
+  date: Date;
+}
