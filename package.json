@@ -6,5 +6,5 @@
   "repository": "git@github.com:Y-Moshe/chat-app.git",
   "author": "Y-Moshe <moshe.nehemiah@gmail.com>",
   "license": "MIT",
-  "private": true
+  "private": false
 }
