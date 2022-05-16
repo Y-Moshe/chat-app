@@ -1,7 +1,9 @@
 const express  = require('express'),
       passport = require('passport'),
       mongoose = require('mongoose'),
-      cors     = require('cors');
+      cors     = require('cors'),
+      http     = require('http'),
+      Server   = require('socket.io').Server;
 require('dotenv').config();
 
 const {
@@ -13,7 +15,8 @@ const {
   AuthRoutes,
   UsersRoutes,
 } = require('./routes');
-const { errorHandler } = require('./middlewares');
+const { errorHandler, auth } = require('./middlewares');
+const onSocketConnection     = require('./socket-handlers');
 
 const app = express();
 
@@ -38,6 +41,7 @@ app.use( passport.initialize() );
 
 app.get( '/', ( req, res ) => res.status(200).send('Hello from Node.js server :)') );
 
+app.use(( req, res, next ) => setTimeout(() => next(), 900 ));
 app.use( BASE_URI.concat( '/auth' ), AuthRoutes );
 app.use( BASE_URI.concat( '/users' ), UsersRoutes );
 
@@ -49,4 +53,14 @@ app.use( errorHandler );
 
 app.get( '/*', ( req, res ) => res.redirect('/') );
 
-app.listen( PORT, () => console.log( `Server(v${ appVersion }) is running at port: ${ PORT }` ));
+const httpServer = http.createServer( app );
+const io = new Server( httpServer, { cors: true });
+
+const wrap = middleware => ( socket, next ) => middleware( socket.request, {}, next );
+
+io.use( wrap( passport.initialize() ));
+io.use( wrap( auth ));
+
+io.on('connection', onSocketConnection( io ));
+
+httpServer.listen( PORT, () => console.log( `Server(v${ appVersion }) is running at port: ${ PORT }` ));
