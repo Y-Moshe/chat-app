@@ -1,28 +1,43 @@
 {
   "name": "server",
   "version": "0.6.0",
-  "description": "Real-Time Server application with basic user authentication.",
-  "main": "index.js",
+  "main": "./src/index.ts",
+  "description": "Real-Time Server Application with basic user Authentication.",
+  "author": "Y-Moshe",
+  "license": "MIT",
+  "private": false,
   "scripts": {
-    "start": "nodemon ./index.js"
+    "start": "nodemon ./src/index.ts",
+    "build": "tsc -p ./tsconfig.json"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
-    "dotenv": "^10.0.0",
-    "express": "^4.17.1",
+    "express": "^4.18.1",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.2.3",
+    "mongoose": "^6.3.3",
     "mongoose-unique-validator": "^2.0.3",
-    "ms": "^2.0.0",
-    "multer": "^1.4.2",
-    "nodemon": "^2.0.9",
+    "ms": "^2.1.3",
+    "multer": "^1.4.4",
     "passport": "^0.4.0",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "socket.io": "^4.4.1"
+    "socket.io": "^4.5.0"
   },
-  "author": "Y-Moshe",
-  "license": "MIT",
-  "private": false
+  "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/mongoose": "^5.11.97",
+    "@types/mongoose-unique-validator": "^1.0.6",
+    "@types/multer": "^1.4.7",
+    "@types/node": "^17.0.34",
+    "@types/passport": "^1.0.7",
+    "@types/passport-jwt": "^3.0.6",
+    "@types/passport-local": "^1.0.34",
+    "dotenv": "^16.0.1",
+    "nodemon": "^2.0.16",
+    "ts-node": "^10.8.0",
+    "typescript": "^4.6.4"
+  }
 }

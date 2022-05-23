@@ -1,8 +1,11 @@
+import { Request, Response, NextFunction } from 'express';
+
 /**
- * A global error handler to catch all types of errors.
+ * A Global Error Handler to catch all types of errors.
  * And trying to find out which error message to send back to the Response!
  */
-const middleware = ( error, req, res, next ) => {
+export default function errorHandler( error: any, req: Request,
+  res: Response, next: NextFunction ) {
   if ( error ) {
     let message = '';
     let status = error?.status || 500;
@@ -41,5 +44,3 @@ const middleware = ( error, req, res, next ) => {
     next();
   }
 };
-
-module.exports = middleware;

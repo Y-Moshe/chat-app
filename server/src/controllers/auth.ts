@@ -1,10 +1,12 @@
-const bcrypt   = require('bcryptjs'),
-      jwt      = require('jsonwebtoken'),
-      passport = require('passport');
+import { Request, Response, NextFunction } from 'express';
+import bcrypt   from 'bcryptjs';
+import jwt      from 'jsonwebtoken';
+import passport from 'passport';
 
-const { User }        = require('../models');
-const { BASE_URI }    = require('../utils');
-const { JWT_SECRET }  = require('../config');
+
+import { User }       from '../models';
+import { BASE_URI }   from '../utils';
+import { JWT_SECRET } from '../config';
 
 const HASH_PASSWORD_SALT         = 10;
 const LOGIN_TOKEN_EXPIRES_IN     = '3h';
@@ -16,9 +18,9 @@ const DEFAULT_PROFILE_IMAGE_NAME = 'default.png';
  * @param {*} expiresIn in ms as number (optional)
  * @returns token properties contains the token, iat and experation date.
  */
-const signToken = ( data, expiresIn = LOGIN_TOKEN_EXPIRES_IN ) => {
+const signToken = ( data: any, expiresIn = LOGIN_TOKEN_EXPIRES_IN ) => {
   const token = jwt.sign({ data }, JWT_SECRET, { expiresIn });
-  const { iat, exp }  = jwt.verify( token, JWT_SECRET );
+  const { iat, exp }: any  = jwt.verify( token, JWT_SECRET );
 
   return {
     string: token,
@@ -27,7 +29,7 @@ const signToken = ( data, expiresIn = LOGIN_TOKEN_EXPIRES_IN ) => {
   };
 };
 
-const createUser = async ( req, res, next ) => {
+export const createUser = async ( req: Request, res: Response, next: NextFunction ) => {
   try {
     const { username, password } = req.body;
 
@@ -58,7 +60,7 @@ const createUser = async ( req, res, next ) => {
   }
 };
 
-const loginUser = ( req, res ) => {
+export const loginUser = ( req: Request, res: Response ) => {
   passport.authenticate( 'local', { session: false },
     ( error, user, info ) => {
     // any error case that can occurs.
@@ -76,10 +78,4 @@ const loginUser = ( req, res ) => {
   })( req, res );
 };
 
-const verifyToken = ( req, res ) => res.status( 200 ).json( req.user );
-
-module.exports = {
-  createUser,
-  loginUser,
-  verifyToken
-};
+export const verifyToken = ( req: Request, res: Response ) => res.status( 200 ).json( req.user );

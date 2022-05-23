@@ -1,29 +1,22 @@
-const express  = require('express'),
-      passport = require('passport'),
-      mongoose = require('mongoose'),
-      cors     = require('cors'),
-      http     = require('http'),
-      Server   = require('socket.io').Server;
-require('dotenv').config();
+import express, { NextFunction } from 'express';
+import { Server, Socket }        from 'socket.io';
+import passport   from 'passport';
+import mongoose   from 'mongoose';
+import cors       from 'cors';
+import http       from 'http';
+import dotenv     from 'dotenv';
+dotenv.config();
 
-const {
-  MONGO_CONNECTION_STRING,
-  PORT
-} = require('./config');
-const { BASE_URI, appVersion } = require('./utils');
-const {
-  AuthRoutes,
-  UsersRoutes,
-} = require('./routes');
-const { errorHandler, auth } = require('./middlewares');
-const onSocketConnection     = require('./socket-handlers');
+import onSocketConnection from './socket-handlers';
+import { DB_CONNECTION_STRING, PORT } from './config';
+import { AuthRoutes, UsersRoutes }    from './routes';
+import { errorHandler, auth }         from './middlewares';
+import { BASE_URI, APP_VERSION }      from './utils';
 
 const app = express();
 
-mongoose.connect( MONGO_CONNECTION_STRING, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-}).then( () => {
+mongoose.connect( DB_CONNECTION_STRING )
+  .then( () => {
   console.log( 'Connected to Database!' );
 }).catch( error => {
   console.error( 'Could not connect to Database' );
@@ -54,13 +47,19 @@ app.use( errorHandler );
 app.get( '/*', ( req, res ) => res.redirect('/') );
 
 const httpServer = http.createServer( app );
-const io = new Server( httpServer, { cors: true });
+const io = new Server( httpServer, {
+  cors: {
+    origin: '*',
+    allowedHeaders: '*',
+    methods: '*'
+  }
+});
 
-const wrap = middleware => ( socket, next ) => middleware( socket.request, {}, next );
+const wrap = ( middleware: any ) => ( socket: Socket, next: NextFunction ) => middleware( socket.request, {}, next );
 
 io.use( wrap( passport.initialize() ));
 io.use( wrap( auth ));
 
 io.on('connection', onSocketConnection( io ));
 
-httpServer.listen( PORT, () => console.log( `Server(v${ appVersion }) is running at port: ${ PORT }` ));
+httpServer.listen( PORT, () => console.log( `Server(v${ APP_VERSION }) is running at port: ${ PORT }` ));

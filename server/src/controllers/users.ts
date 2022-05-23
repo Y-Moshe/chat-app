@@ -1,7 +1,9 @@
-const { User } = require('../models');
-const { isValidId, CustomError } = require('../utils');
+import { Request, Response, NextFunction } from 'express';
 
-const getUsers = async ( req, res, next ) => {
+import { User } from '../models';
+import { isValidId, CustomError } from '../utils';
+
+export const getUsers = async ( req: Request, res: Response, next: NextFunction ) => {
   try {
     const users  = await User.find().select( '-password' ).lean();
     const status = users.length > 0 ? 200 : 204;
@@ -12,7 +14,7 @@ const getUsers = async ( req, res, next ) => {
   }
 };
 
-const getUser = async ( req, res, next ) => {
+export const getUser = async ( req: Request, res: Response, next: NextFunction ) => {
   try {
     const { id: _id } = req.params;
     let user;
@@ -30,9 +32,4 @@ const getUser = async ( req, res, next ) => {
   } catch( error ) {
     next( error );
   }
-};
-
-module.exports = {
-  getUsers,
-  getUser
 };

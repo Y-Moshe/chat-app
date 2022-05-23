@@ -1,7 +1,9 @@
 /**
  * Simple CustomError to be used in error-hanlder middlewere, and in general, for all app.
  */
- class CustomError extends Error {
+export default class CustomError extends Error {
+  status: number;
+
   constructor( message = '', status = 500 )  {
       super( message );
       
@@ -9,5 +11,3 @@
       this.name = 'CustomError';
   }
 }
-
-module.exports = CustomError;

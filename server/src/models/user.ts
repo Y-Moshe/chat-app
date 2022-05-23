@@ -1,7 +1,11 @@
-const mongoose = require('mongoose');
-const mongooseUniqueValidator = require('mongoose-unique-validator');
+import mongoose from 'mongoose';
+import mongooseUniqueValidator from 'mongoose-unique-validator';
 
 const userSchema = new mongoose.Schema({
+  isOnline: {
+    type: Boolean,
+    default: true
+  },
   username: {
     type: String,
     required: 'Username is required!',
@@ -25,5 +29,4 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.plugin( mongooseUniqueValidator );
-const User = mongoose.model( 'User' , userSchema );
-module.exports = { User };
+export default mongoose.model( 'User' , userSchema );

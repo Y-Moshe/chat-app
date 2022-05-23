@@ -1,13 +1,13 @@
-const passport      = require('passport'),
-      LocalStrategy = require('passport-local').Strategy,
-      JwtStrategy   = require('passport-jwt').Strategy,
-      ExtractJwt    = require('passport-jwt').ExtractJwt,
-      bcrypt        = require('bcryptjs');
+import passport from 'passport';
+import { Strategy as LocalStrategy } from 'passport-local';
+import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
+import bcrypt from 'bcryptjs';
 
-const { User } = require('./models');
-const { JWT_SECRET } = require('./config');
+import { User } from './models';
+import { JWT_SECRET } from './config';
 
-passport.use( new LocalStrategy({ session: false }, async ( username, password, done ) => {
+passport.use( new LocalStrategy({ session: false },
+    async ( username, password, done ) => {
   try {
     const user = await User.findOne({ username }).lean();
     // user account was not found
