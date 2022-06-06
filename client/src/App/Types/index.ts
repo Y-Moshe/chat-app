@@ -41,6 +41,7 @@ export type AuthContextType = {
 export type ChatMessageType = {
   id: string;
   type: 'system' | 'own' | 'chat';
+  user: UserData;
   message: string;
   date: Date;
 }
