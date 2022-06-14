@@ -7,9 +7,16 @@ export default function setUserAvailability( io: Server, socket: Socket,
     availability: 'Online' | 'Offline' ) {
   const isOnline = availability === 'Online' ? true : false;
   // @ts-ignore
-  const userId = socket.request.user.data._id;
+  const userData = socket.request.user.data;
+  delete userData.isOnline;
+  delete userData.__v;
+  const messageObj = {
+    type: 'system',
+    user: userData,
+    message: `${ userData.username } ${ isOnline ? 'is Connected' : 'Disconnected' }!`
+  };
 
-  User.updateOne({ _id: userId }, { isOnline })
-    .then(() => io.emit( ChatEvents.userConnected ))
+  User.updateOne({ _id: userData._id }, { isOnline })
+    .then(() => io.emit( ChatEvents.userConnected, messageObj ))
     .catch( e => console.log( e ));
 };
