@@ -1,4 +1,4 @@
-import { useState, useRef, ChangeEvent, KeyboardEvent } from 'react';
+import { useState, useEffect, useRef, ChangeEvent, KeyboardEvent } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import {
   SxProps, Theme, Grid, Box,
@@ -8,8 +8,9 @@ import {
 import { Send as SendIcon } from '@mui/icons-material';
 
 import { ChatMessage } from '../../Components';
-import { ChatMessageType } from '../../Types';
-import { useAuth } from '../../Hooks';
+import { ChatMessageType, UserData } from '../../Types';
+import { useAuth, useSocket } from '../../Hooks';
+import { ChatEvents } from '../../SocketIO';
 
 const PAGE_BG  = 'linear-gradient(120deg, rgba(23, 190, 187, 1), rgba(240, 166, 202, 1))';
 const LIGHT_BG = 'rgba(255, 255, 255, 0.05)';
@@ -42,10 +43,43 @@ const chatContainerStyle: SxProps<Theme> = {
 export function GeneralChatPage() {
   const [ chatMessages, setChatMessages ] = useState<ChatMessageType[]>( [] );
   const [ messageInput, setMessageInput ] = useState( '' );
-  const { isAuth } = useAuth();
+  const userData = useAuth();
+  const socket = useSocket();  
 
   const chatContainerRef = useRef<HTMLDivElement>( null );
   const textFieldRef     = useRef<HTMLInputElement>( null );
+
+  useEffect(() => {
+    if ( socket ) {
+      socket.on( ChatEvents.messagePosted, ( messageObj: ChatMessageType ) => {
+        setChatMessages( prev => [
+          ...prev,
+          {
+            ...messageObj,
+            type: userData.username === messageObj.user.username ? 'own' : 'chat',
+            date: new Date( messageObj.date )
+          }
+        ]);
+        
+        autoScrollToLast();
+      });
+
+      socket.on( ChatEvents.userConnected, ( messageObj: ChatMessageType ) => {
+        console.log(messageObj);
+        
+        setChatMessages( prev => [
+          ...prev,
+          {
+            ...messageObj,
+            id: uuidv4(),
+            date: new Date()
+          }
+        ]);
+        
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ socket ]);
 
   const handleChange = ( e: ChangeEvent<HTMLInputElement> ) => {
     setMessageInput( e.target.value );
@@ -56,18 +90,23 @@ export function GeneralChatPage() {
       return;
     }
 
-    setChatMessages( prev => [
-      ...prev,
-      {
-        id: uuidv4(),
-        type: 'own',
-        message: messageInput,
-        date: new Date()
-      }
-    ]);
-
+    const user: UserData = {
+      _id: userData._id as string,
+      username: userData.username as string,
+      profileImage: userData.profileImage as string,
+      creationDate: userData.creationDate as string 
+    };
+    
+    const message2Send: ChatMessageType = {
+      id: uuidv4(),
+      user,
+      type: 'own',
+      message: messageInput,
+      date: new Date()
+    };
+    
+    socket?.emit( ChatEvents.postMessage, message2Send );
     setMessageInput( '' );
-    setTimeout( () => autoScrollToLast(), 300 );
   };
 
   const handleEnterClick = ( e: KeyboardEvent<HTMLInputElement> ) => {
@@ -102,10 +141,11 @@ export function GeneralChatPage() {
             justifyContent = { 'space-between' }>
             <Box sx = { chatContainerStyle } ref = { chatContainerRef }>
               {
-                chatMessages.map(({ id, type, message, date }) => (
+                chatMessages.map(({ id, type, user, message, date }) => (
                   <ChatMessage
                     key     = { id }
                     id      = { id }
+                    user    = { user }
                     type    = { type }
                     message = { message }
                     date    = { date }
@@ -120,7 +160,7 @@ export function GeneralChatPage() {
                 fullWidth
                 autoFocus
                 inputRef   = { textFieldRef }
-                disabled   = { isAuth === false }
+                disabled   = { userData.isAuth === false }
                 value      = { messageInput }
                 onChange   = { handleChange }
                 onKeyDown  = { handleEnterClick }
