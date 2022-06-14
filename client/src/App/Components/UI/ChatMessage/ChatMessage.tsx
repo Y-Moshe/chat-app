@@ -1,7 +1,8 @@
 import {
   Box, Grid, SxProps,
-  Theme, Typography
+  Theme, Typography, Link
 } from '@mui/material';
+import { NavLink } from 'react-router-dom';
 
 import { ChatMessageType } from '../../../Types';
 
@@ -41,7 +42,16 @@ export function ChatMessage( props: ChatMessageProps ) {
 
   return (
     <Box sx = {{ ...ChatMessageStyle, background: bgColor }}>
-      { props.message }
+      {
+        props.type !== 'system' && (
+          <Link component = { NavLink } to = { '/profile/' + props.user.username }>
+            -{ props.user.username }
+          </Link>
+        )
+      }
+      <Typography component = { 'p' }>
+        { props.message }
+      </Typography>
       <Grid container justifyContent = { 'flex-end' }>
         <Typography
           component  = { 'span' }
